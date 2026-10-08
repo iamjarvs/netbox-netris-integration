@@ -7,19 +7,19 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 if ! command -v docker &>/dev/null; then
   echo "Error: docker is not installed or not on PATH." >&2
-  exit 1
+  
 fi
 
 if ! docker compose version &>/dev/null; then
   echo "Error: the 'docker compose' v2 plugin is required (not the standalone docker-compose v1)." >&2
-  exit 1
+  
 fi
 
 if [ ! -f .env ]; then
   echo "No .env found - copying .env.example -> .env." >&2
   cp .env.example .env
   echo "Edit .env with real secrets (Netris URL/creds, NetBox tokens), then re-run this script." >&2
-  exit 1
+  
 fi
 
 mkdir -p data/postgres data/redis data/redis-cache data/netbox-media data/netbox-reports data/netbox-scripts data/sync-service
@@ -35,7 +35,7 @@ until [ "$(docker inspect -f '{{.State.Health.Status}}' "$(docker compose ps -q 
   if [ "$tries" -gt 60 ]; then
     echo
     echo "NetBox did not become healthy in time. Check: docker compose logs netbox" >&2
-    exit 1
+    
   fi
   printf '.'
   sleep 5
